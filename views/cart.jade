@@ -1,0 +1,121 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='')
+    meta(name='author', content='Mark Otto, Jacob Thornton, and Bootstrap contributors')
+    meta(name='generator', content='Jekyll v3.8.6')
+    title Spare-Shop - Cart
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css', integrity='sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh', crossorigin='anonymous')
+
+    style.
+      .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      }
+      @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+      }
+      }
+      .badge{
+        color:black;
+        background-color:white
+      }
+    // Custom styles for this template
+    link(href='navbar-top.css', rel='stylesheet')
+  body
+    nav.navbar.navbar-expand-md.navbar-dark.bg-dark.mb-4
+      a.navbar-brand(href='#') Spare-Shop
+      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarCollapse', aria-controls='navbarCollapse', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarCollapse.collapse.navbar-collapse
+        ul.navbar-nav.mr-auto.navbar-left
+          li.nav-item
+            a.nav-link(href='/dashboard')  Dashboard
+          li.nav-item
+            a.nav-link(href='/inventory')  Inventory
+          li.nav-item
+            a.nav-link(href='/cart')  Cart-
+             i.badge #{carts.length}
+          li.nav-item
+            a.nav-link(href='/sales') Sales
+          li.nav-item
+            a.nav-link(href='/logout') Logout
+
+
+        
+             
+      
+    main.container(role='main')
+      .jumbotron
+        .row
+         .col
+          h1 Cart 
+          br
+          if carts.length === 0
+           h6 No products added to cart
+         .col
+          if carts.length !==0
+           .row
+            .col
+              h5 Total Amount: KES #{total}
+            .col
+              a(href="/confirmCart").btn.btn-primary.btn-block Confirm
+        
+        .row
+         
+          each cart in carts
+           .col-4
+            .card(style='width: 18rem;margin-bottom:3px')
+             .card-body
+                h5.card-title #{cart.name}
+                p.card-text
+                p Price per unit = KES #{cart.price}
+                p Total Price  = KES #{cart.price2}
+                p Units = #{cart.unit}
+                form(action="/onChange/#{cart.id}", method="post")
+                        label Change Unit:
+                        input(type="number", name="value",value=cart.unit,min=1)
+                        br
+                        br
+                        button.btn.btn-success Change
+                hr
+                a(href="/deleteItem/#{cart.id}").btn.btn-danger Delete Item
+            if carts.length !==0 
+            
+          
+                
+
+        
+
+    script(src='https://code.jquery.com/jquery-3.4.1.slim.min.js', integrity='sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n', crossorigin='anonymous')
+    script(src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js', integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo', crossorigin='anonymous')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js', integrity='sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6', crossorigin='anonymous')
+    script.
+       document.getElementById('change').addEventListener('change',function(e){
+           var id = document.getElementById('cartID').value;
+           fetch('/onChange/'+id,{
+               method:'POST',
+               headers:{
+                   'Accept':'application/json',
+                   'Content-Type':'application/json'
+               },
+               body:JSON.stringify({
+                   id:id,
+                   value:document.getElementById('change').value
+               })
+           }).then(res=>res.json()).then((res)=>{
+               if(res.success===true)
+               {
+                   window.location.href='/cart'
+                   
+               }
+           })
+         
+       })
